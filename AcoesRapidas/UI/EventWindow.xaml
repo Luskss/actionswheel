@@ -1,0 +1,136 @@
+<Window x:Class="AcoesRapidas.UI.EventWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Novo evento"
+        Width="460"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI Variable Text, Segoe UI"
+        FontSize="13"
+        Background="{DynamicResource Brush.Window}"
+        Foreground="{DynamicResource Brush.Text}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="FormStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style x:Key="DestinationChoice" TargetType="RadioButton" BasedOn="{StaticResource ChoiceBase}">
+                <Setter Property="GroupName" Value="Destination" />
+                <Setter Property="Padding" Value="4,7" />
+                <Setter Property="Margin" Value="0,0,6,6" />
+            </Style>
+
+            <Style x:Key="CalendarChoice" TargetType="RadioButton" BasedOn="{StaticResource ChoiceBase}">
+                <Setter Property="GroupName" Value="Calendar" />
+                <Setter Property="Padding" Value="12,6" />
+                <Setter Property="Margin" Value="0,0,6,6" />
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <StackPanel x:Name="Root" Margin="20,16,20,18">
+        <TextBlock Style="{StaticResource SectionTitle}" Text="Novo evento" Margin="0,0,0,14" />
+
+        <TextBlock Style="{StaticResource FieldLabel}" Text="Salvar em" />
+        <UniformGrid Columns="3" Margin="0,0,-6,8">
+            <RadioButton x:Name="DestGoogle" Style="{StaticResource DestinationChoice}" Tag="Google"
+                         Content="Google Agenda" Checked="OnDestinationChecked" />
+            <RadioButton x:Name="DestOutlook" Style="{StaticResource DestinationChoice}" Tag="Outlook"
+                         Content="Outlook" Checked="OnDestinationChecked" />
+            <RadioButton x:Name="DestNextcloud" Style="{StaticResource DestinationChoice}" Tag="Nextcloud"
+                         Content="Nextcloud" Checked="OnDestinationChecked" />
+        </UniformGrid>
+
+        <StackPanel x:Name="ConnectPanel" Visibility="Collapsed">
+            <TextBlock TextWrapping="Wrap"
+                       Text="Para criar eventos, autorize este app no seu Nextcloud. Isso só é pedido uma vez, e o acesso pode ser revogado nas configurações de segurança do Nextcloud." />
+            <Button x:Name="ConnectButton"
+                    Style="{StaticResource PrimaryButton}"
+                    Content="Conectar ao Nextcloud"
+                    HorizontalAlignment="Left"
+                    Margin="0,14,0,0"
+                    Click="OnConnect" />
+            <TextBlock x:Name="ConnectStatus" Style="{StaticResource FieldHint}" Margin="0,10,0,0" />
+        </StackPanel>
+
+        <StackPanel x:Name="FormPanel" Visibility="Collapsed">
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Título" />
+            <TextBox x:Name="TitleBox" MaxLength="200" AutomationProperties.Name="Título do evento" />
+
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Data" Margin="0,12,0,5" />
+            <DockPanel>
+                <ToggleButton x:Name="AllDayToggle"
+                              DockPanel.Dock="Right"
+                              Style="{StaticResource ChoiceBase}"
+                              Content="Dia inteiro"
+                              Padding="12,7"
+                              Margin="6,0,0,0"
+                              Checked="OnAllDayChanged"
+                              Unchecked="OnAllDayChanged" />
+                <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Content="Amanhã"
+                        Padding="10,7" Margin="6,0,0,0" Click="OnTomorrow" />
+                <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Content="Hoje"
+                        Padding="10,7" Margin="6,0,0,0" Click="OnToday" />
+                <TextBox x:Name="DateBox" AutomationProperties.Name="Data do evento" />
+            </DockPanel>
+
+            <Grid x:Name="TimePanel" Margin="0,12,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Início" />
+                    <TextBox x:Name="StartBox" AutomationProperties.Name="Horário de início" LostKeyboardFocus="OnStartLostFocus" />
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Fim" />
+                    <TextBox x:Name="EndBox" AutomationProperties.Name="Horário de fim" TextChanged="OnEndChanged" />
+                </StackPanel>
+            </Grid>
+
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Local (opcional)" Margin="0,12,0,5" />
+            <TextBox x:Name="LocationBox" MaxLength="200" AutomationProperties.Name="Local do evento" />
+
+            <StackPanel x:Name="CalendarSection">
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Calendário" Margin="0,12,0,6" />
+            <WrapPanel x:Name="CalendarPanel" Margin="0,0,-6,-6" />
+            <DockPanel x:Name="CalendarStatusPanel">
+                <Button x:Name="RetryButton"
+                        DockPanel.Dock="Right"
+                        Style="{StaticResource GhostButton}"
+                        Content="Tentar de novo"
+                        Padding="10,5"
+                        Margin="8,0,0,0"
+                        Visibility="Collapsed"
+                        Click="OnRetry" />
+                <TextBlock x:Name="CalendarStatus" Style="{StaticResource FieldHint}" Margin="0" VerticalAlignment="Center" />
+            </DockPanel>
+            </StackPanel>
+        </StackPanel>
+
+        <Border x:Name="ErrorBanner"
+                Margin="0,14,0,0"
+                Padding="10,7"
+                CornerRadius="6"
+                Background="{DynamicResource Brush.Danger}"
+                Visibility="Collapsed">
+            <TextBlock x:Name="ErrorText" Foreground="{DynamicResource Brush.OnDanger}" TextWrapping="Wrap" />
+        </Border>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <Button Style="{StaticResource GhostButton}" Content="Cancelar" MinWidth="96" IsCancel="True" />
+            <Button x:Name="SaveButton"
+                    Style="{StaticResource PrimaryButton}"
+                    Content="Criar evento"
+                    MinWidth="110"
+                    Margin="8,0,0,0"
+                    IsDefault="True"
+                    IsEnabled="False"
+                    Click="OnSave" />
+        </StackPanel>
+    </StackPanel>
+</Window>

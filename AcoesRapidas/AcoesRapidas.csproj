@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- O WPF define o DPI pelo manifesto; o aviso só se aplica a apps WinForms. -->
+    <NoWarn>$(NoWarn);WFO0003</NoWarn>
+    <AssemblyTitle>Ações rápidas</AssemblyTitle>
+    <Product>Ações rápidas</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- WinForms é usado só para o ícone da bandeja; evita conflito de nomes com o WPF. -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+</Project>

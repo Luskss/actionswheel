@@ -1,0 +1,197 @@
+<Window x:Class="AcoesRapidas.UI.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="clr-namespace:AcoesRapidas.UI"
+        Title="Configurações da rodinha"
+        Width="860"
+        Height="800"
+        ResizeMode="CanMinimize"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI Variable Text, Segoe UI"
+        FontSize="13"
+        Background="{DynamicResource Brush.Window}"
+        Foreground="{DynamicResource Brush.Text}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="FormStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style x:Key="TypeChoice" TargetType="RadioButton" BasedOn="{StaticResource ChoiceBase}">
+                <Setter Property="GroupName" Value="ActionType" />
+                <Setter Property="Padding" Value="4,7" />
+                <Setter Property="Margin" Value="0,0,6,6" />
+            </Style>
+
+            <Style x:Key="MediaChoice" TargetType="RadioButton" BasedOn="{StaticResource ChoiceBase}">
+                <Setter Property="GroupName" Value="MediaKey" />
+                <Setter Property="Padding" Value="4,7" />
+                <Setter Property="Margin" Value="0,0,6,6" />
+            </Style>
+
+            <Style x:Key="IconChoice" TargetType="RadioButton" BasedOn="{StaticResource ChoiceBase}">
+                <Setter Property="GroupName" Value="ActionIcon" />
+                <Setter Property="Width" Value="38" />
+                <Setter Property="Height" Value="36" />
+                <Setter Property="Margin" Value="0,0,6,6" />
+                <Setter Property="FontFamily" Value="{StaticResource IconFont}" />
+                <Setter Property="FontSize" Value="17" />
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid x:Name="Root" Margin="16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="350" />
+            <ColumnDefinition Width="14" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Background="{DynamicResource Brush.Panel}" CornerRadius="10" Padding="16">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top">
+                    <DockPanel>
+                        <Button x:Name="BackButton"
+                                DockPanel.Dock="Left"
+                                Style="{StaticResource ToolButton}"
+                                Content="&#xE72B;"
+                                Width="34"
+                                Height="30"
+                                Margin="0,0,8,0"
+                                Visibility="Collapsed"
+                                ToolTip="Voltar para a rodinha anterior"
+                                AutomationProperties.Name="Voltar para a rodinha anterior"
+                                Click="OnBack" />
+                        <TextBlock x:Name="TitleText"
+                                   Style="{StaticResource SectionTitle}"
+                                   Text="Rodinha"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis" />
+                    </DockPanel>
+                    <TextBlock Style="{StaticResource FieldHint}" Text="Clique em uma fatia para editar a ação." />
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button x:Name="MoveBackButton" Style="{StaticResource ToolButton}" Content="&#xE76B;"
+                            ToolTip="Mover para trás" AutomationProperties.Name="Mover para trás" Click="OnMoveBack" />
+                    <Button x:Name="MoveForwardButton" Style="{StaticResource ToolButton}" Content="&#xE76C;"
+                            ToolTip="Mover para a frente" AutomationProperties.Name="Mover para a frente" Click="OnMoveForward" />
+                    <Button x:Name="AddButton" Style="{StaticResource ToolButton}" Content="&#xE710;"
+                            ToolTip="Adicionar ação" ToolTipService.ShowOnDisabled="True"
+                            AutomationProperties.Name="Adicionar ação" Click="OnAdd" />
+                    <Button x:Name="RemoveButton" Style="{StaticResource ToolButton}" Content="&#xE74D;"
+                            ToolTip="Excluir ação" AutomationProperties.Name="Excluir ação" Click="OnRemove" />
+                </StackPanel>
+
+                <ui:WheelPreview x:Name="Preview"
+                                 Margin="0,10"
+                                 AutomationProperties.Name="Prévia da rodinha. Use as setas para trocar de ação." />
+            </DockPanel>
+        </Border>
+
+        <Border Grid.Column="2" Background="{DynamicResource Brush.Panel}" CornerRadius="10" Padding="18,16">
+            <StackPanel x:Name="Editor">
+                <TextBlock Style="{StaticResource SectionTitle}" Text="Ação selecionada" Margin="0,0,0,12" />
+
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Nome" />
+                <TextBox x:Name="LabelBox" MaxLength="24" TextChanged="OnLabelChanged"
+                         AutomationProperties.Name="Nome da ação" />
+
+                <TextBlock Style="{StaticResource FieldLabel}" Text="O que ela faz" Margin="0,14,0,5" />
+                <UniformGrid Columns="4" Margin="0,0,-6,-6">
+                    <RadioButton x:Name="TypeUrl" Style="{StaticResource TypeChoice}" Content="Site ou app" Checked="OnTypeChecked" />
+                    <RadioButton x:Name="TypeCommand" Style="{StaticResource TypeChoice}" Content="Programa" Checked="OnTypeChecked" />
+                    <RadioButton x:Name="TypeMenu" Style="{StaticResource TypeChoice}" Content="Lista" Checked="OnTypeChecked" />
+                    <RadioButton x:Name="TypeMedia" Style="{StaticResource TypeChoice}" Content="Mídia" Checked="OnTypeChecked" />
+                    <RadioButton x:Name="TypeEvent" Style="{StaticResource TypeChoice}" Content="Evento" Checked="OnTypeChecked" />
+                    <RadioButton x:Name="TypeToast" Style="{StaticResource TypeChoice}" Content="Aviso" Checked="OnTypeChecked" />
+                    <RadioButton x:Name="TypeSettings" Style="{StaticResource TypeChoice}" Content="Ajustes" Checked="OnTypeChecked" />
+                </UniformGrid>
+
+                <StackPanel x:Name="TargetPanel" Margin="0,14,0,0">
+                    <TextBlock x:Name="TargetLabel" Style="{StaticResource FieldLabel}" />
+                    <DockPanel>
+                        <Button x:Name="BrowseButton" DockPanel.Dock="Right" Style="{StaticResource GhostButton}"
+                                Content="Procurar" Margin="6,0,0,0" Click="OnBrowse" />
+                        <TextBox x:Name="TargetBox" TextChanged="OnTargetChanged" LostFocus="OnTargetLostFocus" />
+                    </DockPanel>
+                </StackPanel>
+
+                <StackPanel x:Name="ArgsPanel" Margin="0,12,0,0">
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="Argumentos (opcional)" />
+                    <TextBox x:Name="ArgsBox" TextChanged="OnArgsChanged" AutomationProperties.Name="Argumentos do programa" />
+                </StackPanel>
+
+                <UniformGrid x:Name="MediaPanel" Columns="2" Margin="0,14,-6,-6">
+                    <RadioButton x:Name="MediaPlayPause" Style="{StaticResource MediaChoice}" Tag="playpause" Content="Tocar / pausar" Checked="OnMediaChecked" />
+                    <RadioButton x:Name="MediaNext" Style="{StaticResource MediaChoice}" Tag="next" Content="Próxima" Checked="OnMediaChecked" />
+                    <RadioButton x:Name="MediaPrevious" Style="{StaticResource MediaChoice}" Tag="previous" Content="Anterior" Checked="OnMediaChecked" />
+                    <RadioButton x:Name="MediaStop" Style="{StaticResource MediaChoice}" Tag="stop" Content="Parar" Checked="OnMediaChecked" />
+                </UniformGrid>
+
+                <StackPanel x:Name="MenuPanel" Margin="0,14,0,0">
+                    <Button x:Name="EditListButton" Style="{StaticResource GhostButton}" Content="Editar as opções da lista" Click="OnEditList" />
+                </StackPanel>
+
+                <TextBlock x:Name="TypeHint" Style="{StaticResource FieldHint}" />
+
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Ícone" Margin="0,14,0,6" />
+                <WrapPanel x:Name="IconPanel" />
+
+                <DockPanel Margin="0,2,0,0">
+                    <Button x:Name="PickIconButton"
+                            DockPanel.Dock="Left"
+                            Style="{StaticResource GhostButton}"
+                            Content="Usar ícone de um programa…"
+                            Padding="12,6"
+                            Click="OnPickIcon" />
+                    <Button x:Name="ClearIconButton"
+                            DockPanel.Dock="Right"
+                            Style="{StaticResource GhostButton}"
+                            Content="Remover"
+                            Padding="12,6"
+                            Margin="6,0,0,0"
+                            Visibility="Collapsed"
+                            Click="OnClearIcon" />
+                    <Rectangle x:Name="IconPreview"
+                               Width="24"
+                               Height="24"
+                               Margin="10,0,0,0"
+                               HorizontalAlignment="Left"
+                               Fill="{DynamicResource Brush.Text}"
+                               Visibility="Collapsed" />
+                </DockPanel>
+            </StackPanel>
+        </Border>
+
+        <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,14,0,0" LastChildFill="True">
+            <Button x:Name="TestButton" DockPanel.Dock="Left" Style="{StaticResource GhostButton}"
+                    Content="Testar ação" Click="OnTest" />
+            <Button DockPanel.Dock="Left" Style="{StaticResource GhostButton}" Margin="8,0,0,0"
+                    Content="Como usar" Click="OnHelp" />
+            <Button DockPanel.Dock="Left" Style="{StaticResource GhostButton}" Margin="8,0,0,0"
+                    Content="Tutorial do Discord" Click="OnDiscordHelp" />
+
+            <Button x:Name="SaveButton" DockPanel.Dock="Right" Style="{StaticResource PrimaryButton}"
+                    Content="Salvar" MinWidth="96" Margin="8,0,0,0" IsDefault="True" Click="OnSave" />
+            <Button x:Name="CancelButton" DockPanel.Dock="Right" Style="{StaticResource GhostButton}"
+                    Content="Cancelar" MinWidth="96" IsCancel="True" Click="OnCancel" />
+
+            <Border x:Name="ErrorBanner"
+                    Margin="12,0"
+                    Padding="10,6"
+                    CornerRadius="6"
+                    Background="{DynamicResource Brush.Danger}"
+                    Visibility="Collapsed">
+                <TextBlock x:Name="ErrorText"
+                           Foreground="{DynamicResource Brush.OnDanger}"
+                           TextTrimming="CharacterEllipsis"
+                           VerticalAlignment="Center" />
+            </Border>
+        </DockPanel>
+    </Grid>
+</Window>

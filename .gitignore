@@ -1,0 +1,22 @@
+# Saída de compilação e publicação
+bin/
+obj/
+dist/
+artifacts/
+TestResults/
+
+# Editores e IDEs
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# Arquivos do sistema
+Thumbs.db
+desktop.ini
+
+# Configuração e credenciais locais nunca entram no repositório
+config.json
+config.json.bak
+nextcloud.dat

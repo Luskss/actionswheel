@@ -1,0 +1,37 @@
+name: Release
+
+# Publica um release quando uma tag de versão é enviada, como v1.0.0.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Testes
+        run: dotnet test AcoesRapidas.Tests/AcoesRapidas.Tests.csproj -c Release
+
+      - name: Publicar
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}".TrimStart('v')
+          dotnet publish AcoesRapidas/AcoesRapidas.csproj -c Release -r win-x64 --self-contained true `
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true `
+            -p:EnableCompressionInSingleFile=true -p:DebugType=None -p:Version=$version -o dist
+          Compress-Archive -Path dist/AcoesRapidas.exe -DestinationPath "AcoesRapidas-${{ github.ref_name }}-win-x64.zip"
+
+      - name: Criar o release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: AcoesRapidas-${{ github.ref_name }}-win-x64.zip
+          generate_release_notes: true

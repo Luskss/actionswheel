@@ -1,0 +1,18 @@
+<Window x:Class="AcoesRapidas.UI.DiagnosticWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Diagnóstico da tecla Copilot"
+        Width="560"
+        Height="420"
+        WindowStartupLocation="CenterScreen">
+    <DockPanel Margin="12">
+        <TextBlock x:Name="StatusText"
+                   DockPanel.Dock="Top"
+                   Margin="0,0,0,8"
+                   TextWrapping="Wrap" />
+        <TextBox x:Name="LogText"
+                 FontFamily="Consolas"
+                 IsReadOnly="True"
+                 VerticalScrollBarVisibility="Auto" />
+    </DockPanel>
+</Window>

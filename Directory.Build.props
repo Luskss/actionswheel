@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <!-- Mantém a saída de compilação fora do OneDrive para evitar bloqueio de arquivos pela sincronização. -->
+    <UseArtifactsOutput>true</UseArtifactsOutput>
+    <ArtifactsPath>$(LOCALAPPDATA)\AcoesRapidas\build</ArtifactsPath>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+</Project>
